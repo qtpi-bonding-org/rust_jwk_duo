@@ -40,3 +40,26 @@ mod tests {
         assert!(EncryptionKeyPair::import_public_key_raw(&s.export_public_key_raw()).is_ok());
     }
 }
+
+impl KeyDuo {
+    pub fn encrypt(&self, data: &[u8], info: &[u8], aad: &[u8]) -> Result<Vec<u8>> { crate::CryptoService::encrypt(data, &self.encryption, info, aad) }
+    pub fn decrypt(&self, data: &[u8], info: &[u8], aad: &[u8]) -> Result<Vec<u8>> { crate::CryptoService::decrypt(data, &self.encryption, info, aad) }
+    pub fn sign(&self, data: &[u8]) -> Result<[u8; 64]> { self.signing.sign_bytes(data) }
+    pub fn verify_signature(&self, data: &[u8], sig: &[u8]) -> bool { self.signing.verify_bytes(sig, data) }
+    pub fn encrypt_string(&self, s: &str, info: &[u8], aad: &[u8]) -> Result<String> { crate::CryptoService::encrypt_string(s, &self.encryption, info, aad) }
+    pub fn decrypt_string(&self, b64: &str, info: &[u8], aad: &[u8]) -> Result<String> { crate::CryptoService::decrypt_string(b64, &self.encryption, info, aad) }
+    pub fn sign_string(&self, s: &str) -> Result<String> { crate::CryptoService::sign_string(s, &self.signing) }
+    pub fn verify_signature_string(&self, s: &str, sig_hex: &str) -> Result<bool> { crate::CryptoService::verify_signature_string(s, sig_hex, &self.signing) }
+}
+#[cfg(test)]
+mod convenience_tests {
+    use crate::*;
+    #[test] fn duo_convenience_methods_round_trip() {
+        let d = KeyDuo::new(SigningKeyPair::generate(), EncryptionKeyPair::generate()).unwrap();
+        assert_eq!(d.decrypt(&d.encrypt(b"x", b"i", b"a").unwrap(), b"i", b"a").unwrap(), b"x");
+        assert!(d.decrypt(&d.encrypt(b"x", b"i", b"a").unwrap(), b"j", b"a").is_err());
+        assert!(d.verify_signature(b"m", &d.sign(b"m").unwrap()));
+        assert_eq!(d.decrypt_string(&d.encrypt_string("s", b"", b"").unwrap(), b"", b"").unwrap(), "s");
+        assert!(d.verify_signature_string("m", &d.sign_string("m").unwrap()).unwrap());
+    }
+}
