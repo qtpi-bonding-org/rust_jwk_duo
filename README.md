@@ -21,7 +21,7 @@ Differences from 2.x, all deliberate:
   `FormatException`, `StateError`, `ArgumentError`.
 - Symmetric keys are 256-bit only (2.x accepted 128-bit).
 - `CryptoService::decrypt_string` decodes strict padded standard base64 (`base64ct`).
-- No WebCrypto. Platforms: macOS, Linux, iOS, Android.
+- No WebCrypto. Platforms: macOS, Linux, iOS, Android (Linux and Android unverified).
 
 Bugs found in 2.x and fixed in the port: `kid` is checked against the thumbprint; a duo
 with one key in both halves is rejected; JWK members must be canonical unpadded

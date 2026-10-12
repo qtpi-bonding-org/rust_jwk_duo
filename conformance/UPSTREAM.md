@@ -4,7 +4,7 @@
 Repository C2SP/wycheproof, commit `12fd3aa`, `testvectors_v1/` (fetched from raw.githubusercontent.com at that commit; byte-identical to the earlier seed copies).
 
 ## RFC 9180
-Filtered from the `hpke` 0.14.1 crate's `test-vectors/origrfc-5f503c5.json` (the final-RFC copy of cfrg test-vectors.json), keeping the single vector with mode 0, KEM 0x0010, KDF 0x0001, AEAD 0x0002.
+Taken from the `hpke` 0.14.1 crate's `test-vectors/origrfc-5f503c5.json`, not fetched from cfrg/hpke at a pinned commit. The file name suggests it is the final-RFC copy of cfrg's test-vectors.json, but that provenance is the crate's claim, not verified here. Filtered to keeping the single vector with mode 0, KEM 0x0010, KDF 0x0001, AEAD 0x0002.
 
 ## JOSE HPKE
 `draft-ietf-jose-hpke-encrypt-22`, Appendix A.13, the HPKE-7 private JWK (expected kid `YGdLPiZno0vV3kJKu4kEMQEjK3_upFF2D_lFDf1FFwk`).
