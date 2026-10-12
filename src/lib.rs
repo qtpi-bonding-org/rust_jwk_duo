@@ -2,3 +2,4 @@
 pub mod constants;
 mod error;
 pub use error::{Error, Result};
+pub mod hex_codec; pub use hex_codec::HexCodec;
