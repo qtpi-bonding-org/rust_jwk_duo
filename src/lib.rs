@@ -11,3 +11,4 @@ pub mod exported_jwk; pub use exported_jwk::ExportedJwk;
 pub mod interfaces; pub use interfaces::KeyPair;
 pub mod signing_key_pair; pub use signing_key_pair::SigningKeyPair;
 pub mod encryption_key_pair; pub use encryption_key_pair::EncryptionKeyPair;
+pub mod key_duo; pub use key_duo::KeyDuo;
