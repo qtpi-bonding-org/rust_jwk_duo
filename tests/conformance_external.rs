@@ -1,8 +1,27 @@
 //! Task 16: external vectors (Wycheproof, RFC 9180, JOSE-HPKE A.13).
-use hpke::{aead::AesGcm256, kdf::HkdfSha256, kem::DhP256HkdfSha256, Deserializable, Kem, OpModeR};
-use rust_jwk_duo::crypto_service::__seal_with_ikm_e_for_tests;
-use rust_jwk_duo::{calculate_jwk_thumbprint, CryptoService, EncryptionKeyPair, SigningKeyPair};
+use hpke::{aead::AesGcm256, kdf::HkdfSha256, kem::DhP256HkdfSha256, Deserializable, Kem, OpModeR, OpModeS, Serializable};
+use base64ct::{Base64UrlUnpadded, Encoding};
+use rust_jwk_duo::{calculate_jwk_thumbprint, CryptoService, EncryptionKeyPair, SigningKeyPair, SymmetricKey};
 use serde_json::Value;
+
+/// Single-shot seal with the ephemeral key derived from a fixed IKM (RFC 9180 vector replay).
+/// Test-only: a caller-chosen IKM would reuse the ephemeral key, so this never ships.
+fn seal_with_ikm_e(pk_r: &[u8], info: &[u8], pt: &[u8], aad: &[u8], ikm_e: &[u8]) -> (Vec<u8>, Vec<u8>) {
+    struct Fixed<'a>(&'a [u8]);
+    impl rand_core::TryRng for Fixed<'_> {
+        type Error = core::convert::Infallible;
+        fn try_next_u32(&mut self) -> Result<u32, Self::Error> { rand_core::utils::next_word_via_fill(self) }
+        fn try_next_u64(&mut self) -> Result<u64, Self::Error> { rand_core::utils::next_word_via_fill(self) }
+        fn try_fill_bytes(&mut self, d: &mut [u8]) -> Result<(), Self::Error> {
+            assert!(self.0.len() >= d.len(), "ikm_e too short for the requested randomness");
+            let (a, b) = self.0.split_at(d.len()); d.copy_from_slice(a); self.0 = b; Ok(())
+        }
+    }
+    impl rand_core::TryCryptoRng for Fixed<'_> {}
+    let pk = <DhP256HkdfSha256 as Kem>::PublicKey::from_bytes(pk_r).expect("vector pk");
+    let (enc, ct) = hpke::single_shot_seal_with_rng::<AesGcm256, HkdfSha256, DhP256HkdfSha256>(&OpModeS::Base, &pk, info, pt, aad, &mut Fixed(ikm_e)).expect("seal");
+    (enc.to_bytes().to_vec(), ct)
+}
 
 fn dir() -> String {
     std::env::var("JWK_DUO_CONFORMANCE_DIR").unwrap_or_else(|_| concat!(env!("CARGO_MANIFEST_DIR"), "/conformance").to_string())
@@ -78,7 +97,8 @@ fn ecdsa_p1363_case() -> (usize, usize) {
         if !(g["keySize"] == 256 && g["ivSize"] == 96 && g["tagSize"] == 128) { continue; }
         for t in g["tests"].as_array().unwrap() {
             let key: [u8; 32] = h(&t["key"]).try_into().unwrap();
-            let sk = rust_jwk_duo::__symmetric_from_raw(&key);
+            let jwk = serde_json::json!({"kty": "oct", "k": Base64UrlUnpadded::encode_string(&key), "alg": "A256GCM"}).to_string();
+            let sk = SymmetricKey::from_jwk(&jwk).unwrap();
             let mut blob = h(&t["iv"]); blob.extend(h(&t["ct"])); blob.extend(h(&t["tag"]));
             let r = CryptoService::decrypt_symmetric(&blob, &sk, &h(&t["aad"]));
             if t["result"] == "valid" { assert_eq!(r.unwrap(), h(&t["msg"]), "tc {}", t["tcId"]); valid += 1; }
@@ -86,8 +106,7 @@ fn ecdsa_p1363_case() -> (usize, usize) {
             n += 1;
         }
     }
-    assert!(n > 0 && valid > 0, "filter selected nothing");
-    println!("aes_gcm 256/96/128: {n} cases, {valid} valid");
+    assert_eq!((n, valid), (66, 39), "filter selected a different set");
 }
 
 #[test] fn rfc9180_open_and_seal() {
@@ -107,10 +126,10 @@ fn ecdsa_p1363_case() -> (usize, usize) {
         assert_eq!(ctx.open(&h(&e["ct"]), &h(&e["aad"])).unwrap(), h(&e["pt"]), "encryption {i}");
     }
     // Seal: reproduce enc and ct byte for byte from ikmE.
-    let (got_enc, got_ct) = __seal_with_ikm_e_for_tests(&pk_rm, &info, &h(&e0["pt"]), &h(&e0["aad"]), &ikm_e);
+    let (got_enc, got_ct) = seal_with_ikm_e(&pk_rm, &info, &h(&e0["pt"]), &h(&e0["aad"]), &ikm_e);
     assert_eq!(got_enc, enc);
     assert_eq!(got_ct, h(&e0["ct"]));
-    println!("rfc9180 encryptions: {}", encs.len());
+    assert_eq!(encs.len(), 257);
 }
 
 #[test] fn jose_a13_thumbprint_and_private_import() {
