@@ -16,3 +16,5 @@ pub mod symmetric_key; pub use symmetric_key::SymmetricKey;
 pub mod crypto_service; pub use crypto_service::CryptoService;
 pub mod validation_service; pub use validation_service::ValidationService;
 pub mod key_duo_serializer; pub use key_duo_serializer::KeyDuoSerializer;
+pub mod generation_service; pub use generation_service::GenerationService;
+pub mod verification_service; pub use verification_service::VerificationService;
