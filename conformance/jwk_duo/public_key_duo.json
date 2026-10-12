@@ -1,0 +1,128 @@
+{
+ "format_version": 1,
+ "op": "public_key_duo.from_json",
+ "cases": [
+  {
+   "id": "valid",
+   "input": {
+    "json": {
+     "encryptionPublicKeyHex": "04c7774aa956e980cf5fd9c3f4a0fc5c80f07d77ae689f9c21779d153cd94bca611e144f0790c8a8f22d1568ef9cadb2bf5bde31b1e2210bb1b5872396fc1561be",
+     "signingPublicKeyHex": "0483c69eb512fe0d58f4672eb36ca509439d15b1121cdb39b2cd5851d8f219a6408d984c5027292e934b13edd30599b984101c16ab31372bb27431da8c0f7cce79"
+    }
+   },
+   "expect": {
+    "ok": {
+     "encryptionPublicKeyHex": "04c7774aa956e980cf5fd9c3f4a0fc5c80f07d77ae689f9c21779d153cd94bca611e144f0790c8a8f22d1568ef9cadb2bf5bde31b1e2210bb1b5872396fc1561be",
+     "signingPublicKeyHex": "0483c69eb512fe0d58f4672eb36ca509439d15b1121cdb39b2cd5851d8f219a6408d984c5027292e934b13edd30599b984101c16ab31372bb27431da8c0f7cce79"
+    }
+   }
+  },
+  {
+   "id": "second_valid",
+   "input": {
+    "json": {
+     "encryptionPublicKeyHex": "048b5cc6079bf9ff7ee434c0e807d6ec00b0b409cc2d7af32f48da31ac60b77130ea8f84973634e3193c169ba85c76e73edb1b6b68d50aa10592e0554ba0fa0707",
+     "signingPublicKeyHex": "047ca8a97427d09a40303abe5c256f6567ae6e6c2eb6b039dc3b9736a7184cddc500d05259e6e4f255dadd26920fff14fbb447a77eeeb9c76c03ea373ad3642cdd"
+    }
+   },
+   "expect": {
+    "ok": {
+     "encryptionPublicKeyHex": "048b5cc6079bf9ff7ee434c0e807d6ec00b0b409cc2d7af32f48da31ac60b77130ea8f84973634e3193c169ba85c76e73edb1b6b68d50aa10592e0554ba0fa0707",
+     "signingPublicKeyHex": "047ca8a97427d09a40303abe5c256f6567ae6e6c2eb6b039dc3b9736a7184cddc500d05259e6e4f255dadd26920fff14fbb447a77eeeb9c76c03ea373ad3642cdd"
+    }
+   }
+  },
+  {
+   "id": "uppercase_normalised",
+   "input": {
+    "json": {
+     "encryptionPublicKeyHex": "04C7774AA956E980CF5FD9C3F4A0FC5C80F07D77AE689F9C21779D153CD94BCA611E144F0790C8A8F22D1568EF9CADB2BF5BDE31B1E2210BB1B5872396FC1561BE",
+     "signingPublicKeyHex": "0483C69EB512FE0D58F4672EB36CA509439D15B1121CDB39B2CD5851D8F219A6408D984C5027292E934B13EDD30599B984101C16AB31372BB27431DA8C0F7CCE79"
+    }
+   },
+   "expect": {
+    "ok": {
+     "encryptionPublicKeyHex": "04c7774aa956e980cf5fd9c3f4a0fc5c80f07d77ae689f9c21779d153cd94bca611e144f0790c8a8f22d1568ef9cadb2bf5bde31b1e2210bb1b5872396fc1561be",
+     "signingPublicKeyHex": "0483c69eb512fe0d58f4672eb36ca509439d15b1121cdb39b2cd5851d8f219a6408d984c5027292e934b13edd30599b984101c16ab31372bb27431da8c0f7cce79"
+    }
+   }
+  },
+  {
+   "id": "identical_halves",
+   "input": {
+    "json": {
+     "signingPublicKeyHex": "0483c69eb512fe0d58f4672eb36ca509439d15b1121cdb39b2cd5851d8f219a6408d984c5027292e934b13edd30599b984101c16ab31372bb27431da8c0f7cce79",
+     "encryptionPublicKeyHex": "0483c69eb512fe0d58f4672eb36ca509439d15b1121cdb39b2cd5851d8f219a6408d984c5027292e934b13edd30599b984101c16ab31372bb27431da8c0f7cce79"
+    }
+   },
+   "expect": {
+    "error": "argument"
+   }
+  },
+  {
+   "id": "missing_encryption",
+   "input": {
+    "json": {
+     "signingPublicKeyHex": "0483c69eb512fe0d58f4672eb36ca509439d15b1121cdb39b2cd5851d8f219a6408d984c5027292e934b13edd30599b984101c16ab31372bb27431da8c0f7cce79"
+    }
+   },
+   "expect": {
+    "error": "format"
+   }
+  },
+  {
+   "id": "empty_object",
+   "input": {
+    "json": {}
+   },
+   "expect": {
+    "error": "format"
+   }
+  },
+  {
+   "id": "non_string_member",
+   "input": {
+    "json": {
+     "signingPublicKeyHex": 5,
+     "encryptionPublicKeyHex": "04c7774aa956e980cf5fd9c3f4a0fc5c80f07d77ae689f9c21779d153cd94bca611e144f0790c8a8f22d1568ef9cadb2bf5bde31b1e2210bb1b5872396fc1561be"
+    }
+   },
+   "expect": {
+    "error": "format"
+   }
+  },
+  {
+   "id": "not_an_object",
+   "input": {
+    "json": []
+   },
+   "expect": {
+    "error": "format"
+   }
+  },
+  {
+   "id": "bad_hex",
+   "input": {
+    "json": {
+     "signingPublicKeyHex": "04",
+     "encryptionPublicKeyHex": "04c7774aa956e980cf5fd9c3f4a0fc5c80f07d77ae689f9c21779d153cd94bca611e144f0790c8a8f22d1568ef9cadb2bf5bde31b1e2210bb1b5872396fc1561be"
+    }
+   },
+   "expect": {
+    "error": "format"
+   }
+  },
+  {
+   "id": "wrong_tag",
+   "input": {
+    "json": {
+     "signingPublicKeyHex": "0283c69eb512fe0d58f4672eb36ca509439d15b1121cdb39b2cd5851d8f219a6408d984c5027292e934b13edd30599b984101c16ab31372bb27431da8c0f7cce79",
+     "encryptionPublicKeyHex": "04c7774aa956e980cf5fd9c3f4a0fc5c80f07d77ae689f9c21779d153cd94bca611e144f0790c8a8f22d1568ef9cadb2bf5bde31b1e2210bb1b5872396fc1561be"
+    }
+   },
+   "expect": {
+    "error": "format"
+   }
+  }
+ ]
+}

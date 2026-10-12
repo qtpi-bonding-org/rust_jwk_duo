@@ -1,0 +1,116 @@
+{
+ "format_version": 1,
+ "op": "signature.verify",
+ "cases": [
+  {
+   "id": "low_s",
+   "input": {
+    "public_hex": "04ab6526643945d19e9744e9b8f797d43e7323b4653a7edf842f9f6b245ccc39ed25a5df5447f52bd43496fd7dacff359000def7cc545595a84972a085de119a8d",
+    "message_b64": "andrX2R1byBjb25mb3JtYW5jZSBtZXNzYWdl",
+    "signature_hex": "60962abeac44953a805c1a6b608eb0dc166253c2028db3d481f3c4e1d4a09ac72d878ad39c4485d5ab7128a6409a7fc5ee64bad82c49744152ab7143b08bd922"
+   },
+   "expect": {
+    "ok": true
+   }
+  },
+  {
+   "id": "high_s",
+   "input": {
+    "public_hex": "04ab6526643945d19e9744e9b8f797d43e7323b4653a7edf842f9f6b245ccc39ed25a5df5447f52bd43496fd7dacff359000def7cc545595a84972a085de119a8d",
+    "message_b64": "andrX2R1byBjb25mb3JtYW5jZSBtZXNzYWdl",
+    "signature_hex": "60962abeac44953a805c1a6b608eb0dc166253c2028db3d481f3c4e1d4a09ac7d278752b63bb7a2b548ed759bf658039ce823fd57ace2a43a10e597f4bd74c2f"
+   },
+   "expect": {
+    "ok": true
+   }
+  },
+  {
+   "id": "tampered",
+   "input": {
+    "public_hex": "04ab6526643945d19e9744e9b8f797d43e7323b4653a7edf842f9f6b245ccc39ed25a5df5447f52bd43496fd7dacff359000def7cc545595a84972a085de119a8d",
+    "message_b64": "andrX2R1byBjb25mb3JtYW5jZSBtZXNzYWdl",
+    "signature_hex": "60962abeac44953a805c1b6b608eb0dc166253c2028db3d481f3c4e1d4a09ac72d878ad39c4485d5ab7128a6409a7fc5ee64bad82c49744152ab7143b08bd922"
+   },
+   "expect": {
+    "ok": false
+   }
+  },
+  {
+   "id": "ten_bytes",
+   "input": {
+    "public_hex": "04ab6526643945d19e9744e9b8f797d43e7323b4653a7edf842f9f6b245ccc39ed25a5df5447f52bd43496fd7dacff359000def7cc545595a84972a085de119a8d",
+    "message_b64": "andrX2R1byBjb25mb3JtYW5jZSBtZXNzYWdl",
+    "signature_hex": "00000000000000000000"
+   },
+   "expect": {
+    "ok": false
+   }
+  },
+  {
+   "id": "empty",
+   "input": {
+    "public_hex": "04ab6526643945d19e9744e9b8f797d43e7323b4653a7edf842f9f6b245ccc39ed25a5df5447f52bd43496fd7dacff359000def7cc545595a84972a085de119a8d",
+    "message_b64": "andrX2R1byBjb25mb3JtYW5jZSBtZXNzYWdl",
+    "signature_hex": ""
+   },
+   "expect": {
+    "ok": false
+   }
+  },
+  {
+   "id": "sixty_five_bytes",
+   "input": {
+    "public_hex": "04ab6526643945d19e9744e9b8f797d43e7323b4653a7edf842f9f6b245ccc39ed25a5df5447f52bd43496fd7dacff359000def7cc545595a84972a085de119a8d",
+    "message_b64": "andrX2R1byBjb25mb3JtYW5jZSBtZXNzYWdl",
+    "signature_hex": "60962abeac44953a805c1a6b608eb0dc166253c2028db3d481f3c4e1d4a09ac72d878ad39c4485d5ab7128a6409a7fc5ee64bad82c49744152ab7143b08bd92200"
+   },
+   "expect": {
+    "ok": false
+   }
+  },
+  {
+   "id": "all_zero_64",
+   "input": {
+    "public_hex": "04ab6526643945d19e9744e9b8f797d43e7323b4653a7edf842f9f6b245ccc39ed25a5df5447f52bd43496fd7dacff359000def7cc545595a84972a085de119a8d",
+    "message_b64": "andrX2R1byBjb25mb3JtYW5jZSBtZXNzYWdl",
+    "signature_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+   },
+   "expect": {
+    "ok": false
+   }
+  },
+  {
+   "id": "different_message",
+   "input": {
+    "public_hex": "04ab6526643945d19e9744e9b8f797d43e7323b4653a7edf842f9f6b245ccc39ed25a5df5447f52bd43496fd7dacff359000def7cc545595a84972a085de119a8d",
+    "message_b64": "YW5vdGhlciBtZXNzYWdl",
+    "signature_hex": "60962abeac44953a805c1a6b608eb0dc166253c2028db3d481f3c4e1d4a09ac72d878ad39c4485d5ab7128a6409a7fc5ee64bad82c49744152ab7143b08bd922"
+   },
+   "expect": {
+    "ok": false
+   }
+  },
+  {
+   "id": "uppercase_public_hex",
+   "input": {
+    "public_hex": "04AB6526643945D19E9744E9B8F797D43E7323B4653A7EDF842F9F6B245CCC39ED25A5DF5447F52BD43496FD7DACFF359000DEF7CC545595A84972A085DE119A8D",
+    "message_b64": "andrX2R1byBjb25mb3JtYW5jZSBtZXNzYWdl",
+    "signature_hex": "60962abeac44953a805c1a6b608eb0dc166253c2028db3d481f3c4e1d4a09ac72d878ad39c4485d5ab7128a6409a7fc5ee64bad82c49744152ab7143b08bd922"
+   },
+   "expect": {
+    "ok": true
+   }
+  },
+  {
+   "id": "public_key_wrong_tag",
+   "input": {
+    "public_hex": "02ab6526643945d19e9744e9b8f797d43e7323b4653a7edf842f9f6b245ccc39ed25a5df5447f52bd43496fd7dacff359000def7cc545595a84972a085de119a8d",
+    "message_b64": "andrX2R1byBjb25mb3JtYW5jZSBtZXNzYWdl",
+    "signature_hex": "60962abeac44953a805c1a6b608eb0dc166253c2028db3d481f3c4e1d4a09ac72d878ad39c4485d5ab7128a6409a7fc5ee64bad82c49744152ab7143b08bd922"
+   },
+   "expect": {
+    "error": "format"
+   }
+  }
+ ]
+}

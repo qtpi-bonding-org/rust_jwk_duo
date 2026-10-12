@@ -1,0 +1,182 @@
+{
+ "format_version": 1,
+ "op": "symmetric.decrypt",
+ "cases": [
+  {
+   "id": "ok",
+   "input": {
+    "key_jwk": "{\"alg\":\"A256GCM\",\"k\":\"u6uNY-Dj178iYXqHpBO4hd8hKdHGDeH9JNCwaIiyZ0c\",\"kty\":\"oct\",\"use\":\"enc\"}",
+    "aad_b64": "cm93LTQy",
+    "blob_b64": "/buw7xXFKzl4+MRMKoIH5p/uPdOXralBQPXGxUXVpG0zJlvwQTPGij68t8I="
+   },
+   "expect": {
+    "ok": "c3ltbWV0cmljIHNlY3JldA=="
+   }
+  },
+  {
+   "id": "wrong_aad",
+   "input": {
+    "key_jwk": "{\"alg\":\"A256GCM\",\"k\":\"u6uNY-Dj178iYXqHpBO4hd8hKdHGDeH9JNCwaIiyZ0c\",\"kty\":\"oct\",\"use\":\"enc\"}",
+    "aad_b64": "cm93LTQz",
+    "blob_b64": "/buw7xXFKzl4+MRMKoIH5p/uPdOXralBQPXGxUXVpG0zJlvwQTPGij68t8I="
+   },
+   "expect": {
+    "error": "format"
+   }
+  },
+  {
+   "id": "missing_aad",
+   "input": {
+    "key_jwk": "{\"alg\":\"A256GCM\",\"k\":\"u6uNY-Dj178iYXqHpBO4hd8hKdHGDeH9JNCwaIiyZ0c\",\"kty\":\"oct\",\"use\":\"enc\"}",
+    "aad_b64": "",
+    "blob_b64": "/buw7xXFKzl4+MRMKoIH5p/uPdOXralBQPXGxUXVpG0zJlvwQTPGij68t8I="
+   },
+   "expect": {
+    "error": "format"
+   }
+  },
+  {
+   "id": "truncated_below_minimum",
+   "input": {
+    "key_jwk": "{\"alg\":\"A256GCM\",\"k\":\"u6uNY-Dj178iYXqHpBO4hd8hKdHGDeH9JNCwaIiyZ0c\",\"kty\":\"oct\",\"use\":\"enc\"}",
+    "aad_b64": "cm93LTQy",
+    "blob_b64": "/buw7xXFKzl4+A=="
+   },
+   "expect": {
+    "error": "format"
+   }
+  },
+  {
+   "id": "one_byte_below_minimum",
+   "input": {
+    "key_jwk": "{\"alg\":\"A256GCM\",\"k\":\"u6uNY-Dj178iYXqHpBO4hd8hKdHGDeH9JNCwaIiyZ0c\",\"kty\":\"oct\",\"use\":\"enc\"}",
+    "aad_b64": "cm93LTQy",
+    "blob_b64": "/buw7xXFKzl4+MRMKoIH5p/uPdOXralBQPXG"
+   },
+   "expect": {
+    "error": "format"
+   }
+  },
+  {
+   "id": "one_byte_short",
+   "input": {
+    "key_jwk": "{\"alg\":\"A256GCM\",\"k\":\"u6uNY-Dj178iYXqHpBO4hd8hKdHGDeH9JNCwaIiyZ0c\",\"kty\":\"oct\",\"use\":\"enc\"}",
+    "aad_b64": "cm93LTQy",
+    "blob_b64": "/buw7xXFKzl4+MRMKoIH5p/uPdOXralBQPXGxUXVpG0zJlvwQTPGij68tw=="
+   },
+   "expect": {
+    "error": "format"
+   }
+  },
+  {
+   "id": "flipped_iv_byte",
+   "input": {
+    "key_jwk": "{\"alg\":\"A256GCM\",\"k\":\"u6uNY-Dj178iYXqHpBO4hd8hKdHGDeH9JNCwaIiyZ0c\",\"kty\":\"oct\",\"use\":\"enc\"}",
+    "aad_b64": "cm93LTQy",
+    "blob_b64": "/Luw7xXFKzl4+MRMKoIH5p/uPdOXralBQPXGxUXVpG0zJlvwQTPGij68t8I="
+   },
+   "expect": {
+    "error": "format"
+   }
+  },
+  {
+   "id": "flipped_ciphertext_byte",
+   "input": {
+    "key_jwk": "{\"alg\":\"A256GCM\",\"k\":\"u6uNY-Dj178iYXqHpBO4hd8hKdHGDeH9JNCwaIiyZ0c\",\"kty\":\"oct\",\"use\":\"enc\"}",
+    "aad_b64": "cm93LTQy",
+    "blob_b64": "/buw7xXFKzl4+MRMKoIG5p/uPdOXralBQPXGxUXVpG0zJlvwQTPGij68t8I="
+   },
+   "expect": {
+    "error": "format"
+   }
+  },
+  {
+   "id": "flipped_tag_byte",
+   "input": {
+    "key_jwk": "{\"alg\":\"A256GCM\",\"k\":\"u6uNY-Dj178iYXqHpBO4hd8hKdHGDeH9JNCwaIiyZ0c\",\"kty\":\"oct\",\"use\":\"enc\"}",
+    "aad_b64": "cm93LTQy",
+    "blob_b64": "/buw7xXFKzl4+MRMKoIH5p/uPdOXralBQPXGxUXVpG0zJlvwQTPGij68t8M="
+   },
+   "expect": {
+    "error": "format"
+   }
+  },
+  {
+   "id": "empty_blob",
+   "input": {
+    "key_jwk": "{\"alg\":\"A256GCM\",\"k\":\"u6uNY-Dj178iYXqHpBO4hd8hKdHGDeH9JNCwaIiyZ0c\",\"kty\":\"oct\",\"use\":\"enc\"}",
+    "aad_b64": "cm93LTQy",
+    "blob_b64": ""
+   },
+   "expect": {
+    "error": "format"
+   }
+  },
+  {
+   "id": "wrong_key",
+   "input": {
+    "key_jwk": "{\"kty\": \"oct\", \"k\": \"AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8\", \"alg\": \"A256GCM\", \"use\": \"enc\"}",
+    "aad_b64": "cm93LTQy",
+    "blob_b64": "/buw7xXFKzl4+MRMKoIH5p/uPdOXralBQPXGxUXVpG0zJlvwQTPGij68t8I="
+   },
+   "expect": {
+    "error": "format"
+   }
+  },
+  {
+   "id": "key_128_bit",
+   "input": {
+    "key_jwk": "{\"alg\": \"A256GCM\", \"k\": \"AAAAAAAAAAAAAAAAAAAAAA\", \"kty\": \"oct\", \"use\": \"enc\"}",
+    "aad_b64": "cm93LTQy",
+    "blob_b64": "/buw7xXFKzl4+MRMKoIH5p/uPdOXralBQPXGxUXVpG0zJlvwQTPGij68t8I="
+   },
+   "expect": {
+    "error": "format"
+   }
+  },
+  {
+   "id": "key_wrong_alg",
+   "input": {
+    "key_jwk": "{\"alg\": \"A128GCM\", \"k\": \"u6uNY-Dj178iYXqHpBO4hd8hKdHGDeH9JNCwaIiyZ0c\", \"kty\": \"oct\", \"use\": \"enc\"}",
+    "aad_b64": "cm93LTQy",
+    "blob_b64": "/buw7xXFKzl4+MRMKoIH5p/uPdOXralBQPXGxUXVpG0zJlvwQTPGij68t8I="
+   },
+   "expect": {
+    "error": "format"
+   }
+  },
+  {
+   "id": "key_kty_ec",
+   "input": {
+    "key_jwk": "{\"alg\": \"A256GCM\", \"k\": \"u6uNY-Dj178iYXqHpBO4hd8hKdHGDeH9JNCwaIiyZ0c\", \"kty\": \"EC\", \"use\": \"enc\"}",
+    "aad_b64": "cm93LTQy",
+    "blob_b64": "/buw7xXFKzl4+MRMKoIH5p/uPdOXralBQPXGxUXVpG0zJlvwQTPGij68t8I="
+   },
+   "expect": {
+    "error": "format"
+   }
+  },
+  {
+   "id": "key_k_not_a_string",
+   "input": {
+    "key_jwk": "{\"alg\": \"A256GCM\", \"k\": 5, \"kty\": \"oct\", \"use\": \"enc\"}",
+    "aad_b64": "cm93LTQy",
+    "blob_b64": "/buw7xXFKzl4+MRMKoIH5p/uPdOXralBQPXGxUXVpG0zJlvwQTPGij68t8I="
+   },
+   "expect": {
+    "error": "format"
+   }
+  },
+  {
+   "id": "key_not_json",
+   "input": {
+    "key_jwk": "{",
+    "aad_b64": "cm93LTQy",
+    "blob_b64": "/buw7xXFKzl4+MRMKoIH5p/uPdOXralBQPXGxUXVpG0zJlvwQTPGij68t8I="
+   },
+   "expect": {
+    "error": "format"
+   }
+  }
+ ]
+}

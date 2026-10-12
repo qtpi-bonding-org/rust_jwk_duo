@@ -1,0 +1,57 @@
+{
+ "format_version": 1,
+ "cases": [
+  {
+   "id": "private_duo1",
+   "op": "jwk_set.import_private",
+   "input": {
+    "jwk_set": "{\"keys\":[{\"alg\":\"ES256\",\"crv\":\"P-256\",\"d\":\"nNlTRGOpVmbCqDgTy2N-SfDzOcnZ7lCK5mI2hqFuX6Y\",\"kid\":\"f8cv_GuhyG3l9eJI6_8H2-XZuI5jhCgq0VoHy1mpvNA\",\"kty\":\"EC\",\"use\":\"sig\",\"x\":\"g8aetRL-DVj0Zy6zbKUJQ50VsRIc2zmyzVhR2PIZpkA\",\"y\":\"jZhMUCcpLpNLE-3TBZm5hBAcFqsxNyuydDHajA98znk\"},{\"alg\":\"HPKE-7\",\"crv\":\"P-256\",\"d\":\"6X4jMtirUP3whHoGdI-QvBqW-1x0vtmPcosBeTs_Vqo\",\"kid\":\"HhqZNtcT2w9rj0Ww2-4Q99HHCfat3Aqms2sb2x_Wgsc\",\"kty\":\"EC\",\"use\":\"enc\",\"x\":\"x3dKqVbpgM9f2cP0oPxcgPB9d65on5whd50VPNlLymE\",\"y\":\"HhRPB5DIqPItFWjvnK2yv1veMbHiIQuxtYcjlvwVYb4\"}]}"
+   },
+   "expect": {
+    "ok": {
+     "encryptionPublicKeyHex": "04c7774aa956e980cf5fd9c3f4a0fc5c80f07d77ae689f9c21779d153cd94bca611e144f0790c8a8f22d1568ef9cadb2bf5bde31b1e2210bb1b5872396fc1561be",
+     "signingPublicKeyHex": "0483c69eb512fe0d58f4672eb36ca509439d15b1121cdb39b2cd5851d8f219a6408d984c5027292e934b13edd30599b984101c16ab31372bb27431da8c0f7cce79"
+    }
+   }
+  },
+  {
+   "id": "public_duo1",
+   "op": "jwk_set.import_public",
+   "input": {
+    "jwk_set": "{\"keys\":[{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kid\":\"f8cv_GuhyG3l9eJI6_8H2-XZuI5jhCgq0VoHy1mpvNA\",\"kty\":\"EC\",\"use\":\"sig\",\"x\":\"g8aetRL-DVj0Zy6zbKUJQ50VsRIc2zmyzVhR2PIZpkA\",\"y\":\"jZhMUCcpLpNLE-3TBZm5hBAcFqsxNyuydDHajA98znk\"},{\"alg\":\"HPKE-7\",\"crv\":\"P-256\",\"kid\":\"HhqZNtcT2w9rj0Ww2-4Q99HHCfat3Aqms2sb2x_Wgsc\",\"kty\":\"EC\",\"use\":\"enc\",\"x\":\"x3dKqVbpgM9f2cP0oPxcgPB9d65on5whd50VPNlLymE\",\"y\":\"HhRPB5DIqPItFWjvnK2yv1veMbHiIQuxtYcjlvwVYb4\"}]}"
+   },
+   "expect": {
+    "ok": {
+     "encryptionPublicKeyHex": "04c7774aa956e980cf5fd9c3f4a0fc5c80f07d77ae689f9c21779d153cd94bca611e144f0790c8a8f22d1568ef9cadb2bf5bde31b1e2210bb1b5872396fc1561be",
+     "signingPublicKeyHex": "0483c69eb512fe0d58f4672eb36ca509439d15b1121cdb39b2cd5851d8f219a6408d984c5027292e934b13edd30599b984101c16ab31372bb27431da8c0f7cce79"
+    }
+   }
+  },
+  {
+   "id": "private_duo2",
+   "op": "jwk_set.import_private",
+   "input": {
+    "jwk_set": "{\"keys\":[{\"alg\":\"ES256\",\"crv\":\"P-256\",\"d\":\"JoIP0FTZHd4m9YGB3V4OtkHWG93rvxaT5ZSgDxg1Y50\",\"kid\":\"UG59iwUn0rCMy8S8ANWQ4s20tcD3V1VNIaPj-FIGwdo\",\"kty\":\"EC\",\"use\":\"sig\",\"x\":\"fKipdCfQmkAwOr5cJW9lZ65ubC62sDncO5c2pxhM3cU\",\"y\":\"ANBSWebk8lXa3SaSD_8U-7RHp37uucdsA-o3OtNkLN0\"},{\"alg\":\"HPKE-7\",\"crv\":\"P-256\",\"d\":\"I9XD6XPnNQEqoR0Hl8l2DauJTwKhK82xkhceARyWYZw\",\"kid\":\"NZluDWKE3vyoqpOmhV6UOoHmlgBWzIv0t0HS01U9Dn4\",\"kty\":\"EC\",\"use\":\"enc\",\"x\":\"i1zGB5v5_37kNMDoB9bsALC0CcwtevMvSNoxrGC3cTA\",\"y\":\"6o-ElzY04xk8FpuoXHbnPtsba2jVCqEFkuBVS6D6Bwc\"}]}"
+   },
+   "expect": {
+    "ok": {
+     "encryptionPublicKeyHex": "048b5cc6079bf9ff7ee434c0e807d6ec00b0b409cc2d7af32f48da31ac60b77130ea8f84973634e3193c169ba85c76e73edb1b6b68d50aa10592e0554ba0fa0707",
+     "signingPublicKeyHex": "047ca8a97427d09a40303abe5c256f6567ae6e6c2eb6b039dc3b9736a7184cddc500d05259e6e4f255dadd26920fff14fbb447a77eeeb9c76c03ea373ad3642cdd"
+    }
+   }
+  },
+  {
+   "id": "public_duo2",
+   "op": "jwk_set.import_public",
+   "input": {
+    "jwk_set": "{\"keys\":[{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kid\":\"UG59iwUn0rCMy8S8ANWQ4s20tcD3V1VNIaPj-FIGwdo\",\"kty\":\"EC\",\"use\":\"sig\",\"x\":\"fKipdCfQmkAwOr5cJW9lZ65ubC62sDncO5c2pxhM3cU\",\"y\":\"ANBSWebk8lXa3SaSD_8U-7RHp37uucdsA-o3OtNkLN0\"},{\"alg\":\"HPKE-7\",\"crv\":\"P-256\",\"kid\":\"NZluDWKE3vyoqpOmhV6UOoHmlgBWzIv0t0HS01U9Dn4\",\"kty\":\"EC\",\"use\":\"enc\",\"x\":\"i1zGB5v5_37kNMDoB9bsALC0CcwtevMvSNoxrGC3cTA\",\"y\":\"6o-ElzY04xk8FpuoXHbnPtsba2jVCqEFkuBVS6D6Bwc\"}]}"
+   },
+   "expect": {
+    "ok": {
+     "encryptionPublicKeyHex": "048b5cc6079bf9ff7ee434c0e807d6ec00b0b409cc2d7af32f48da31ac60b77130ea8f84973634e3193c169ba85c76e73edb1b6b68d50aa10592e0554ba0fa0707",
+     "signingPublicKeyHex": "047ca8a97427d09a40303abe5c256f6567ae6e6c2eb6b039dc3b9736a7184cddc500d05259e6e4f255dadd26920fff14fbb447a77eeeb9c76c03ea373ad3642cdd"
+    }
+   }
+  }
+ ]
+}

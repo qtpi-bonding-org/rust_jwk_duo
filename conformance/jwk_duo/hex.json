@@ -1,0 +1,91 @@
+{
+ "format_version": 1,
+ "cases": [
+  {
+   "id": "decode_lower",
+   "op": "hex.decode",
+   "input": {
+    "hex": "000aff",
+    "expected_len": 6
+   },
+   "expect": {
+    "ok": "000aff"
+   }
+  },
+  {
+   "id": "decode_upper_accepted",
+   "op": "hex.decode",
+   "input": {
+    "hex": "0AFF",
+    "expected_len": 4
+   },
+   "expect": {
+    "ok": "0aff"
+   }
+  },
+  {
+   "id": "decode_empty",
+   "op": "hex.decode",
+   "input": {
+    "hex": "",
+    "expected_len": 0
+   },
+   "expect": {
+    "ok": ""
+   }
+  },
+  {
+   "id": "decode_wrong_length",
+   "op": "hex.decode",
+   "input": {
+    "hex": "00",
+    "expected_len": 4
+   },
+   "expect": {
+    "error": "format"
+   }
+  },
+  {
+   "id": "decode_odd_length",
+   "op": "hex.decode",
+   "input": {
+    "hex": "000",
+    "expected_len": 3
+   },
+   "expect": {
+    "error": "format"
+   }
+  },
+  {
+   "id": "decode_non_hex",
+   "op": "hex.decode",
+   "input": {
+    "hex": "0g",
+    "expected_len": 2
+   },
+   "expect": {
+    "error": "format"
+   }
+  },
+  {
+   "id": "encode_zero_padded_lowercase",
+   "op": "hex.encode",
+   "input": {
+    "bytes_hex": "000aff"
+   },
+   "expect": {
+    "ok": "000aff"
+   }
+  },
+  {
+   "id": "encode_empty",
+   "op": "hex.encode",
+   "input": {
+    "bytes_hex": ""
+   },
+   "expect": {
+    "ok": ""
+   }
+  }
+ ]
+}

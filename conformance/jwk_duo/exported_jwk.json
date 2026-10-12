@@ -1,0 +1,86 @@
+{
+ "format_version": 1,
+ "op": "exported_jwk.check",
+ "cases": [
+  {
+   "id": "es256_sig",
+   "input": {
+    "alg": "ES256",
+    "use": "sig"
+   },
+   "expect": {
+    "ok": true
+   }
+  },
+  {
+   "id": "hpke7_enc",
+   "input": {
+    "alg": "HPKE-7",
+    "use": "enc"
+   },
+   "expect": {
+    "ok": true
+   }
+  },
+  {
+   "id": "es256_enc",
+   "input": {
+    "alg": "ES256",
+    "use": "enc"
+   },
+   "expect": {
+    "error": "argument"
+   }
+  },
+  {
+   "id": "hpke7_sig",
+   "input": {
+    "alg": "HPKE-7",
+    "use": "sig"
+   },
+   "expect": {
+    "error": "argument"
+   }
+  },
+  {
+   "id": "legacy_ecdh_enc",
+   "input": {
+    "alg": "ECDH-ES+A256KW",
+    "use": "enc"
+   },
+   "expect": {
+    "error": "argument"
+   }
+  },
+  {
+   "id": "sig_with_unknown_alg",
+   "input": {
+    "alg": "RS256",
+    "use": "sig"
+   },
+   "expect": {
+    "error": "argument"
+   }
+  },
+  {
+   "id": "es256_unknown_use",
+   "input": {
+    "alg": "ES256",
+    "use": "wrap"
+   },
+   "expect": {
+    "error": "argument"
+   }
+  },
+  {
+   "id": "hpke7_empty_use",
+   "input": {
+    "alg": "HPKE-7",
+    "use": ""
+   },
+   "expect": {
+    "error": "argument"
+   }
+  }
+ ]
+}

@@ -1,0 +1,87 @@
+{
+ "format_version": 1,
+ "op": "sec1.decode_hex",
+ "cases": [
+  {
+   "id": "valid",
+   "input": {
+    "hex": "0483c69eb512fe0d58f4672eb36ca509439d15b1121cdb39b2cd5851d8f219a6408d984c5027292e934b13edd30599b984101c16ab31372bb27431da8c0f7cce79"
+   },
+   "expect": {
+    "ok": "0483c69eb512fe0d58f4672eb36ca509439d15b1121cdb39b2cd5851d8f219a6408d984c5027292e934b13edd30599b984101c16ab31372bb27431da8c0f7cce79"
+   }
+  },
+  {
+   "id": "uppercase_normalised",
+   "input": {
+    "hex": "0483C69EB512FE0D58F4672EB36CA509439D15B1121CDB39B2CD5851D8F219A6408D984C5027292E934B13EDD30599B984101C16AB31372BB27431DA8C0F7CCE79"
+   },
+   "expect": {
+    "ok": "0483c69eb512fe0d58f4672eb36ca509439d15b1121cdb39b2cd5851d8f219a6408d984c5027292e934b13edd30599b984101c16ab31372bb27431da8c0f7cce79"
+   }
+  },
+  {
+   "id": "wrong_tag_02",
+   "input": {
+    "hex": "0283c69eb512fe0d58f4672eb36ca509439d15b1121cdb39b2cd5851d8f219a6408d984c5027292e934b13edd30599b984101c16ab31372bb27431da8c0f7cce79"
+   },
+   "expect": {
+    "error": "format"
+   }
+  },
+  {
+   "id": "wrong_tag_00",
+   "input": {
+    "hex": "0083c69eb512fe0d58f4672eb36ca509439d15b1121cdb39b2cd5851d8f219a6408d984c5027292e934b13edd30599b984101c16ab31372bb27431da8c0f7cce79"
+   },
+   "expect": {
+    "error": "format"
+   }
+  },
+  {
+   "id": "compressed_length_66",
+   "input": {
+    "hex": "0283c69eb512fe0d58f4672eb36ca509439d15b1121cdb39b2cd5851d8f219a640"
+   },
+   "expect": {
+    "error": "format"
+   }
+  },
+  {
+   "id": "one_byte_short",
+   "input": {
+    "hex": "0483c69eb512fe0d58f4672eb36ca509439d15b1121cdb39b2cd5851d8f219a6408d984c5027292e934b13edd30599b984101c16ab31372bb27431da8c0f7cce"
+   },
+   "expect": {
+    "error": "format"
+   }
+  },
+  {
+   "id": "one_byte_long",
+   "input": {
+    "hex": "0483c69eb512fe0d58f4672eb36ca509439d15b1121cdb39b2cd5851d8f219a6408d984c5027292e934b13edd30599b984101c16ab31372bb27431da8c0f7cce7900"
+   },
+   "expect": {
+    "error": "format"
+   }
+  },
+  {
+   "id": "non_hex",
+   "input": {
+    "hex": "0483c69eb512fe0d58f4672eb36ca509439d15b1121cdb39b2cd5851d8f219a6408d984c5027292e934b13edd30599b984101c16ab31372bb27431da8c0f7cce7z"
+   },
+   "expect": {
+    "error": "format"
+   }
+  },
+  {
+   "id": "empty",
+   "input": {
+    "hex": ""
+   },
+   "expect": {
+    "error": "format"
+   }
+  }
+ ]
+}
