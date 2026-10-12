@@ -21,7 +21,7 @@ Differences from 2.x, all deliberate:
   `FormatException`, `StateError`, `ArgumentError`.
 - Symmetric keys are 256-bit only (2.x accepted 128-bit).
 - `CryptoService::decrypt_string` decodes strict padded standard base64 (`base64ct`).
-- No WebCrypto. Platforms: macOS, Linux, iOS, Android (Linux and Android unverified).
+- No WebCrypto. Platforms: macOS, Linux, iOS, Android (binding verified on Linux/amd64 in Docker and on an x86_64 Android emulator; see the `dart_jwk_duo` README).
 
 Bugs found in 2.x and fixed in the port: `kid` is checked against the thumbprint; a duo
 with one key in both halves is rejected; JWK members must be canonical unpadded
@@ -140,21 +140,20 @@ The Dart binding also needs the targets and tools listed in the `dart_jwk_duo` R
 
 ## Linux
 
-Not verified on Linux. Docker was unavailable when this was written, so no Linux build of
-this crate or of the binding has been run. The command (mounts both sibling repos, builds, runs the Dart suite) is in the
+The binding built and passed its Dart suite on Linux/amd64 in Docker (`dart:3.11`, 2026-10-12), which compiles this crate there. The command (mounts both sibling repos, builds, runs the Dart suite) is in the
 `dart_jwk_duo` README under "Linux"; to test only this crate:
 
 ```bash
 docker run --rm -v "$PWD:/src" -w /src rust:1.92 cargo test
 ```
 
-(also unrun).
+(this crate-only command has not been run).
 
 ## Platform loading
 
 This crate is a plain Rust library with no loading logic. Loading the native build is the
-binding's job; see "Platform loading" in the `dart_jwk_duo` README (iOS simulator verified,
-Android not verified).
+binding's job; see "Platform loading" in the `dart_jwk_duo` README (iOS simulator and Android x86_64
+emulator verified).
 
 ## Development
 
