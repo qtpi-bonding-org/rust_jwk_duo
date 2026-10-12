@@ -12,9 +12,31 @@ pub mod interfaces; pub use interfaces::KeyPair;
 pub mod signing_key_pair; pub use signing_key_pair::SigningKeyPair;
 pub mod encryption_key_pair; pub use encryption_key_pair::EncryptionKeyPair;
 pub mod key_duo; pub use key_duo::KeyDuo;
-pub mod symmetric_key; pub use symmetric_key::SymmetricKey;
+pub mod symmetric_key; pub use symmetric_key::{SymmetricKey, __symmetric_from_raw};
 pub mod crypto_service; pub use crypto_service::CryptoService;
 pub mod validation_service; pub use validation_service::ValidationService;
 pub mod key_duo_serializer; pub use key_duo_serializer::KeyDuoSerializer;
 pub mod generation_service; pub use generation_service::GenerationService;
 pub mod verification_service; pub use verification_service::VerificationService;
+
+// Test hooks for the external-vector runner (Tasks 16-17). Not part of the API.
+#[doc(hidden)]
+pub fn __parse_ec_public_jwk(json: &str) -> Result<()> {
+    match serde_json::from_str::<serde_json::Value>(json) {
+        Ok(serde_json::Value::Object(m)) => jwk::parse_ec_public(&m).map(|_| ()),
+        _ => Err(Error::Format("Invalid JSON format".into())),
+    }
+}
+#[doc(hidden)]
+pub fn __parse_ec_private_jwk(json: &str) -> Result<()> {
+    match serde_json::from_str::<serde_json::Value>(json) {
+        Ok(serde_json::Value::Object(m)) => jwk::parse_ec_private(&m).map(|_| ()),
+        _ => Err(Error::Format("Invalid JSON format".into())),
+    }
+}
+#[doc(hidden)]
+pub fn __exported_jwk_check(alg: &str, use_: &str) -> Result<()> {
+    let mut m = serde_json::Map::new();
+    m.insert("kty".into(), constants::jwk_key_type::EC.into());
+    ExportedJwk::new(m, String::new(), alg, use_).map(|_| ())
+}

@@ -44,6 +44,9 @@ impl SymmetricKey {
     pub(crate) fn __raw_for_tests(&self) -> &[u8] { &*self.0 }
 }
 
+#[doc(hidden)]
+pub fn __symmetric_from_raw(raw: &[u8; 32]) -> SymmetricKey { SymmetricKey(Zeroizing::new(*raw)) }
+
 #[cfg(test)]
 mod tests {
     use super::*; use crate::Error;

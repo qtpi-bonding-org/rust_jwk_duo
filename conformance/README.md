@@ -1,0 +1,27 @@
+# Conformance vectors
+
+Shared vectors that the Rust and Dart implementations must both satisfy.
+
+- `wycheproof/`, `rfc9180/`, `jose_hpke/`: external vectors, run by `tests/conformance_external.rs`. Sources and hashes are in `UPSTREAM.md`.
+- The runner contract below is implemented by the Rust runner and the Dart runner.
+
+## Runner contract
+
+| `op` | `input` members | `expect.ok` means | Runs in |
+|---|---|---|---|
+| `hex.decode` | `hex` (string), `expected_len` (int) | lowercase hex of the decoded bytes | Rust, Dart |
+| `hex.encode` | `bytes_hex` (string) | the encoded string | Rust, Dart |
+| `sec1.decode_hex` | `hex` | lowercase hex of the 65 bytes | Rust, Dart |
+| `public_key_duo.from_json` | `json` (object) | the canonical `to_json` object | Rust, Dart |
+| `thumbprint` | `jwk` (object) | the thumbprint string | Rust, Dart |
+| `jwk_set.import_private` | `jwk_set` (string) | the `PublicKeyDuo` JSON object of the imported duo | Rust, Dart |
+| `jwk_set.import_public` | `jwk_set` (string) | the same | Rust, Dart |
+| `exported_jwk.check` | `alg`, `use` | `true` (accepted) | **Rust only** (via `__exported_jwk_check`; Dart 3.0 has no public `ExportedJwk` constructor) |
+| `signature.verify` | `public_hex`, `message_b64`, `signature_hex` | a bool | Rust, Dart |
+| `crypto.decrypt` | `jwk_set` (private duo, string), `blob_b64`, `info_b64`, `aad_b64` | plaintext as base64 | Rust, Dart |
+| `symmetric.decrypt` | `key_jwk` (string), `blob_b64`, `aad_b64` | plaintext as base64 | Rust, Dart |
+
+Every case is `{"id", "input": {...}, "expect": {"ok": <value>} | {"error": "format"|"state"|"argument"}}`.
+Every file has a top-level `"format_version"` equal to
+`constants::FORMAT_VERSION`. Base64 is standard with padding; hex is
+lowercase.
