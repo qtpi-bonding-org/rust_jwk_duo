@@ -2,6 +2,7 @@
 use crate::error::{format, Result};
 use crate::interfaces::KeyPair;
 use crate::{EncryptionKeyPair, EncryptionPublicKeyHex, KeyDuo, PublicKeyDuo, SigningKeyPair, SigningPublicKeyHex, ValidationService};
+use crate::validation_service::opt_str;
 use serde_json::{Map, Value};
 
 pub struct KeyDuoSerializer;
@@ -16,8 +17,8 @@ fn parse_set(json: &str) -> Result<Value> {
 }
 
 fn check_kid(m: &Map<String, Value>, computed: Result<String>) -> Result<()> {
-    match m.get("kid") {
-        Some(Value::String(k)) if *k == computed? => Ok(()),
+    match opt_str(m, "kid")? {
+        Some(k) if k == computed? => Ok(()),
         _ => Err(format(KID_MISMATCH)),
     }
 }
@@ -75,7 +76,7 @@ impl KeyDuoSerializer {
 
 #[cfg(test)]
 mod tests {
-    use super::KeyDuoSerializer as S; use crate::*; use serde_json::Value;
+    use super::{KeyDuoSerializer as S, KID_MISMATCH}; use crate::*; use serde_json::Value;
     fn duo() -> KeyDuo { KeyDuo::new(SigningKeyPair::generate(), EncryptionKeyPair::generate()).unwrap() }
     #[test] fn export_structure_sig_first_and_round_trip() {
         let d = duo(); let j = S::export_key_duo_jwk(&d).unwrap(); let v: Value = serde_json::from_str(&j).unwrap();
@@ -90,7 +91,7 @@ mod tests {
     #[test] fn import_rejects_kid_that_is_not_the_thumbprint() { // bug 1: validation_service.dart:102,144
         let other = duo(); let mut v: Value = serde_json::from_str(&S::export_key_duo_jwk(&duo()).unwrap()).unwrap();
         v["keys"][0]["kid"] = interfaces::KeyPair::calculate_key_id(other.signing_key_pair()).unwrap().into();
-        assert!(matches!(S::import_key_duo_jwk(&v.to_string()), Err(Error::Format(m)) if m.contains("kid")));
+        assert!(matches!(S::import_key_duo_jwk(&v.to_string()), Err(Error::Format(m)) if m == KID_MISMATCH));
     }
     #[test] fn import_rejects_identical_halves() { // bug 2: key_duo_serializer.dart:148
         let mut v: Value = serde_json::from_str(&S::export_key_duo_jwk(&duo()).unwrap()).unwrap();
@@ -112,7 +113,11 @@ mod tests {
     #[test] fn non_string_kid_is_a_format_error() {
         let mut v: Value = serde_json::from_str(&S::export_key_duo_jwk(&duo()).unwrap()).unwrap();
         v["keys"][0]["kid"] = 5.into();
-        assert!(matches!(S::import_key_duo_jwk(&v.to_string()), Err(Error::Format(m)) if m.contains("kid")));
+        assert!(matches!(S::import_key_duo_jwk(&v.to_string()), Err(Error::Format(m)) if m == "JWK member \"kid\" must be a string"));
+        v["keys"][0].as_object_mut().unwrap().remove("kid");
+        assert!(matches!(S::import_key_duo_jwk(&v.to_string()), Err(Error::Format(m)) if m == "Key must contain key identifier \"kid\""));
+        v["keys"][0]["kid"] = "not-the-thumbprint".into();
+        assert!(matches!(S::import_key_duo_jwk(&v.to_string()), Err(Error::Format(m)) if m == KID_MISMATCH));
     }
     #[test] fn public_import_strips_private_members_and_extractors_agree() {
         let d = duo(); let j = S::export_key_duo_jwk(&d).unwrap();

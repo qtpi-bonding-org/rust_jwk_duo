@@ -6,7 +6,7 @@ use serde_json::{Map, Value};
 pub struct ValidationService;
 
 /// `Ok(None)` when absent, `Ok(Some(&str))` for a string, a format error otherwise (bug 4).
-fn opt_str<'a>(m: &'a Map<String, Value>, k: &str) -> Result<Option<&'a str>> {
+pub(crate) fn opt_str<'a>(m: &'a Map<String, Value>, k: &str) -> Result<Option<&'a str>> {
     match m.get(k) {
         None => Ok(None),
         Some(Value::String(s)) => Ok(Some(s)),
