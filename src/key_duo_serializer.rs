@@ -107,7 +107,7 @@ mod tests {
         let mut v: Value = serde_json::from_str(&S::export_key_duo_jwk(&duo()).unwrap()).unwrap();
         let other: Value = serde_json::from_str(&S::export_key_duo_jwk(&duo()).unwrap()).unwrap();
         v["keys"][0]["d"] = other["keys"][0]["d"].clone();
-        assert!(matches!(S::import_key_duo_jwk(&v.to_string()), Err(Error::Format(m)) if m.contains("does not match")));
+        assert!(matches!(S::import_key_duo_jwk(&v.to_string()), Err(Error::Format(m)) if m.contains("\"d\" does not match")));
     }
     #[test] fn non_string_kid_is_a_format_error() {
         let mut v: Value = serde_json::from_str(&S::export_key_duo_jwk(&duo()).unwrap()).unwrap();

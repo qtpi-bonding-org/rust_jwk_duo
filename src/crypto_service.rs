@@ -53,21 +53,6 @@ impl CryptoService {
         Ok(Self::verify_signature(s.as_bytes(), &sig, v))
     }
 }
-#[doc(hidden)]
-pub fn __seal_with_ikm_e_for_tests(pk_r: &[u8], info: &[u8], pt: &[u8], aad: &[u8], ikm_e: &[u8]) -> (Vec<u8>, Vec<u8>) {
-    struct Fixed<'a>(&'a [u8]);
-    impl rand_core::TryRng for Fixed<'_> {
-        type Error = core::convert::Infallible;
-        fn try_next_u32(&mut self) -> core::result::Result<u32, Self::Error> { rand_core::utils::next_word_via_fill(self) }
-        fn try_next_u64(&mut self) -> core::result::Result<u64, Self::Error> { rand_core::utils::next_word_via_fill(self) }
-        fn try_fill_bytes(&mut self, d: &mut [u8]) -> core::result::Result<(), Self::Error> { let (a, b) = self.0.split_at(d.len()); d.copy_from_slice(a); self.0 = b; Ok(()) }
-    }
-    impl rand_core::TryCryptoRng for Fixed<'_> {}
-    let pk = <DhP256HkdfSha256 as Kem>::PublicKey::from_bytes(pk_r).expect("vector pk");
-    let (enc, ct) = hpke::single_shot_seal_with_rng::<AesGcm256, HkdfSha256, DhP256HkdfSha256>(&OpModeS::Base, &pk, info, pt, aad, &mut Fixed(ikm_e)).expect("seal");
-    (enc.to_bytes().to_vec(), ct)
-}
-
 #[cfg(test)]
 mod tests {
     use super::CryptoService as C; use crate::*;

@@ -493,6 +493,7 @@ dependencies = [
  "hpke",
  "p256",
  "rand_core",
+ "rust_jwk_duo",
  "serde",
  "serde_json",
  "sha2",
