@@ -3,8 +3,28 @@ use crate::constants::{jwk_algorithm, jwk_key_type, jwk_use};
 use crate::error::{argument, format, Result};
 use serde_json::{Map, Value};
 
+/// A validated JWK export. All fields are private: the only constructor is
+/// crate-internal `new`, which enforces the alg/use/kty invariants, and there
+/// is no mutation API, so an invalid value cannot exist.
+///
+/// ```compile_fail
+/// use rust_jwk_duo::ExportedJwk;
+/// fn tamper(jwk: &mut ExportedJwk) { jwk.alg = "x".into(); }
+/// ```
+///
+/// ```compile_fail
+/// use rust_jwk_duo::ExportedJwk;
+/// fn read(jwk: &ExportedJwk) -> &str { &jwk.use_ }
+/// ```
+///
+/// ```compile_fail
+/// use rust_jwk_duo::ExportedJwk;
+/// fn forge() -> ExportedJwk {
+///     ExportedJwk { key_id: String::new(), alg: "x".into(), use_: "y".into() }
+/// }
+/// ```
 #[derive(Clone, PartialEq)]
-pub struct ExportedJwk { key_data: Map<String, Value>, pub key_id: String, pub alg: String, pub use_: String }
+pub struct ExportedJwk { key_data: Map<String, Value>, key_id: String, alg: String, use_: String }
 
 /// Redacting Debug: key data may hold `d`; secrets never appear in Debug.
 impl std::fmt::Debug for ExportedJwk {
@@ -20,6 +40,9 @@ impl ExportedJwk {
         s.validate()?;
         Ok(s)
     }
+    pub fn key_id(&self) -> &str { &self.key_id }
+    pub fn alg(&self) -> &str { &self.alg }
+    pub fn use_(&self) -> &str { &self.use_ }
     fn kty(&self) -> Option<&str> { self.key_data.get("kty").and_then(Value::as_str) }
     fn validate(&self) -> Result<()> {
         let is_ec = self.kty() == Some(jwk_key_type::EC);

@@ -69,7 +69,7 @@ Dart 3.0 keeps the 2.x name for every symbol not marked removed (with `Future` r
 | `IKeyPair` | `KeyPair` trait: `has_private_key`, `export_private_key`, `export_public_key`, `export_public_key_raw`, `export_public_key_sec1_hex`, `calculate_key_id` |
 | `IKeyPair.privateKey`, `.publicKey` (WebCrypto-typed getters) | removed: no WebCrypto |
 | `IKeyDuo` | removed: `KeyDuo` is the only implementation (`signing_key_pair()`, `encryption_key_pair()`) |
-| `ExportedJwk` (`keyId`, `alg`, `use`, `toJson`, `toPublicOnly`) | `ExportedJwk` (`key_id`, `alg`, `use_`, `to_json`, `to_public_only`) |
+| `ExportedJwk` (`keyId`, `alg`, `use`, `toJson`, `toPublicOnly`) | `ExportedJwk` (read-only accessors `key_id()`, `alg()`, `use_()`; fields private; `to_json`, `to_public_only`) |
 | `calculateJwkThumbprint` | `calculate_jwk_thumbprint` |
 
 ### Key pairs and containers
