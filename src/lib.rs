@@ -14,3 +14,4 @@ pub mod encryption_key_pair; pub use encryption_key_pair::EncryptionKeyPair;
 pub mod key_duo; pub use key_duo::KeyDuo;
 pub mod symmetric_key; pub use symmetric_key::SymmetricKey;
 pub mod crypto_service; pub use crypto_service::CryptoService;
+pub mod validation_service; pub use validation_service::ValidationService;
