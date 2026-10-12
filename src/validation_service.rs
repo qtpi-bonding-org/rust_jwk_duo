@@ -145,6 +145,20 @@ mod tests {
         let mut s = sig(); s["kty"] = json!(5);
         assert!(matches!(V::validate_signing_key(s.as_object().unwrap(), false), Err(Error::Format(_))));
     }
+    #[test] fn non_string_members_name_the_member() { // bug 4: pins opt_str
+        let msg = |r: crate::Result<()>| match r { Err(Error::Format(m)) => m, o => panic!("expected Format, got {o:?}") };
+        let m = msg(V::validate_key_duo_jwk_structure(&json!({"keys":[{"use":5}, enc()]})));
+        assert!(m.contains("\"use\" must be a string"), "{m}");
+        for member in ["kty", "crv", "alg"] {
+            let mut s = sig(); s[member] = json!(5);
+            let m = msg(V::validate_signing_key(s.as_object().unwrap(), false));
+            assert!(m.contains(&format!("\"{member}\" must be a string")), "{m}");
+        }
+        let mut e = enc(); e["alg"] = json!(5);
+        assert!(msg(V::validate_encryption_key(e.as_object().unwrap(), false)).contains("alg\" must be a string"));
+        let mut k = json!({"kty":"oct","k":"x"}); k["kty"] = json!(5);
+        assert!(msg(V::validate_symmetric_key_jwk(k.as_object().unwrap())).contains("\"kty\" must be a string"));
+    }
     #[test] fn encryption_key_alg_must_be_hpke7_and_legacy_label_is_rejected() {
         let mut e = enc(); e["alg"] = json!("ECDH-ES+A256KW");
         assert!(matches!(V::validate_encryption_key(e.as_object().unwrap(), false), Err(Error::Format(m)) if m.contains("HPKE-7")));
@@ -154,9 +168,9 @@ mod tests {
         let mut s = sig(); s.as_object_mut().unwrap().remove("kid"); assert!(V::validate_signing_key(s.as_object().unwrap(), false).is_err());
     }
     #[test] fn no_private_material_rejects_malformed_sets() { // bug 8: validation_service.dart:222,224
-        assert!(matches!(V::validate_no_private_key_material(&json!({"keys":{}})), Err(Error::Format(_))));
-        assert!(matches!(V::validate_no_private_key_material(&json!({"keys":[3]})), Err(Error::Format(_))));
-        assert!(matches!(V::validate_no_private_key_material(&json!({"keys":[{"d":"x"}]})), Err(Error::Format(m)) if m.contains("d")));
+        assert!(matches!(V::validate_no_private_key_material(&json!({"keys":{}})), Err(Error::Format(m)) if m.contains("keys\" must be an array")));
+        assert!(matches!(V::validate_no_private_key_material(&json!({"keys":[3]})), Err(Error::Format(m)) if m.contains("must be an object")));
+        assert!(matches!(V::validate_no_private_key_material(&json!({"keys":[{"d":"x"}]})), Err(Error::Format(m)) if m.contains("detected: d.")));
     }
     #[test] fn public_set_extraction_keeps_only_public_members() {
         let mut s = sig(); s["d"] = json!("secret");

@@ -100,7 +100,19 @@ mod tests {
     }
     #[test] fn import_rejects_legacy_2x_encryption_alg() {
         let mut v: Value = serde_json::from_str(&S::export_key_duo_jwk(&duo()).unwrap()).unwrap();
-        v["keys"][1]["alg"] = "ECDH-ES+A256KW".into(); assert!(S::import_key_duo_jwk(&v.to_string()).is_err());
+        v["keys"][1]["alg"] = "ECDH-ES+A256KW".into();
+        assert!(matches!(S::import_key_duo_jwk(&v.to_string()), Err(Error::Format(m)) if m.contains("HPKE-7")));
+    }
+    #[test] fn private_import_rejects_d_from_another_key() {
+        let mut v: Value = serde_json::from_str(&S::export_key_duo_jwk(&duo()).unwrap()).unwrap();
+        let other: Value = serde_json::from_str(&S::export_key_duo_jwk(&duo()).unwrap()).unwrap();
+        v["keys"][0]["d"] = other["keys"][0]["d"].clone();
+        assert!(matches!(S::import_key_duo_jwk(&v.to_string()), Err(Error::Format(m)) if m.contains("does not match")));
+    }
+    #[test] fn non_string_kid_is_a_format_error() {
+        let mut v: Value = serde_json::from_str(&S::export_key_duo_jwk(&duo()).unwrap()).unwrap();
+        v["keys"][0]["kid"] = 5.into();
+        assert!(matches!(S::import_key_duo_jwk(&v.to_string()), Err(Error::Format(m)) if m.contains("kid")));
     }
     #[test] fn public_import_strips_private_members_and_extractors_agree() {
         let d = duo(); let j = S::export_key_duo_jwk(&d).unwrap();
@@ -110,6 +122,6 @@ mod tests {
     #[test] fn extractor_non_string_and_bad_json_are_format_errors() { // bug 9: key_duo_serializer.dart:289; bug 4: :110
         assert!(matches!(S::extract_public_key_duo("not json"), Err(Error::Format(_))));
         assert!(matches!(S::extract_public_key_duo("[]"), Err(Error::Format(_))));
-        assert!(matches!(S::import_key_duo_jwk(r#"{"keys":[{"use":5},{"use":"enc"}]}"#), Err(Error::Format(_))));
+        assert!(matches!(S::import_key_duo_jwk(r#"{"keys":[{"use":5},{"use":"enc"}]}"#), Err(Error::Format(m)) if m.contains("must be a string")));
     }
 }
