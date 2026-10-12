@@ -140,14 +140,14 @@ The Dart binding also needs the targets and tools listed in the `dart_jwk_duo` R
 
 ## Linux
 
-The binding built and passed its Dart suite on Linux/amd64 in Docker (`dart:3.11`, 2026-10-12), which compiles this crate there. The command (mounts both sibling repos, builds, runs the Dart suite) is in the
-`dart_jwk_duo` README under "Linux"; to test only this crate:
+The binding built and passed its Dart suite on Linux/amd64 in Docker (`dart:3.11`, 2026-10-12), which compiles this crate there. `dart_jwk_duo/tool/verify.sh linux` runs that (it copies both sibling repos, builds, runs the Dart suite;
+see "Verifying platforms" in the `dart_jwk_duo` README). To test only this crate:
 
 ```bash
 docker run --rm -v "$PWD:/src" -w /src rust:1.92 cargo test
 ```
 
-(this crate-only command has not been run).
+The crate-only command was run 2026-10-12 (exit 0; 71 unit + 11 + 7 integration tests passed, 0 failed). It writes a Linux `target/` into the checkout; delete it before building on macOS.
 
 ## Platform loading
 
