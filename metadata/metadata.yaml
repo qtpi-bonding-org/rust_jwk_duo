@@ -1,0 +1,105 @@
+id: rust-jwk-duo
+verified_at: 489985d
+public:
+  name: rust_jwk_duo
+  summary: Rust P-256 signing and encryption key duo with JWK, SEC1 hex and HPKE, conformance-tested against a Dart port.
+  status: active
+  stage: beta
+  stack:
+  - Rust
+  - p256
+  - hpke
+  - aes-gcm
+  links:
+  - type: repo
+    url: https://github.com/qtpi-bonding-org/rust_jwk_duo
+private:
+  started: 2026-10
+  visibility: private
+  license: MIT
+  ownership: designed and directed; code written with AI assistance
+  build: agentic
+facts:
+- id: signing-ecdsa-p256-p1363
+  assertion: SigningKeyPair signs bytes with ECDSA over P-256 through the p256 crate and returns a 64-byte
+    r||s (P1363) signature; sign_bytes returns a State error on a public-only key pair. verify_bytes returns
+    false, not an error, for any malformed signature and accepts both low-S and high-S encodings of a valid
+    signature.
+  evidence:
+  - src/signing_key_pair.rs
+  - src/constants.rs
+- id: encryption-hpke-base-p256-aes256gcm
+  assertion: CryptoService::encrypt and decrypt use single-shot HPKE base mode with DHKEM(P-256, HKDF-SHA256),
+    HKDF-SHA256 and AES-256-GCM. The output is 0x01 || 65-byte SEC1 uncompressed encapsulated key || AEAD
+    ciphertext with its 16-byte tag, and the caller's info is prefixed with the ASCII string rust_jwk_duo/hpke/v1
+    followed by one NUL byte before use; decrypt on a public-only key pair returns a State error.
+  evidence:
+  - src/crypto_service.rs
+  - src/constants.rs
+  - src/encryption_key_pair.rs
+- id: symmetric-aes256gcm-iv-prefix
+  assertion: SymmetricKey holds a 32-byte key, and CryptoService::encrypt_symmetric outputs a 12-byte IV
+    from getrandom followed by AES-256-GCM ciphertext and tag; decrypt_symmetric returns a Format error for
+    input shorter than 28 bytes or failed authentication. encrypt_symmetric panics via expect if the OS RNG
+    is unavailable.
+  evidence:
+  - src/crypto_service.rs
+  - src/symmetric_key.rs
+- id: symmetric-jwk-import-256-only
+  assertion: SymmetricKey::from_jwk accepts only a JSON object with kty "oct", an alg that is absent or "A256GCM",
+    and a k member that is unpadded base64url decoding to exactly 32 bytes; any other input, including a
+    128-bit key or a padded k, returns a Format error.
+  evidence:
+  - src/symmetric_key.rs
+  - src/jwk.rs
+- id: ec-jwk-and-sec1-import-validation
+  assertion: EC JWK import requires kty "EC", crv "P-256", and x and y as unpadded base64url decoding to
+    32 bytes each, and a private d must be a valid P-256 scalar whose public point equals x/y; SEC1 import
+    requires exactly 65 bytes with a leading 0x04 tag and an on-curve point. All of these failures return
+    Format errors, and KeyDuo::new returns an Argument error when both halves share a public key.
+  evidence:
+  - src/jwk.rs
+  - src/sec1_public_key.rs
+  - src/key_duo.rs
+  - src/key_duo_serializer.rs
+- id: pinned-rustcrypto-dependencies
+  assertion: Cargo.toml pins p256 =0.14.0, hpke =0.14.1 and aes-gcm =0.11.1 exactly, and Cargo.lock resolves
+    them to those versions; sha2, base64ct, zeroize and serde_json are semver-ranged in Cargo.toml.
+  evidence:
+  - Cargo.toml
+  - Cargo.lock
+- id: jwk-duo-case-runner
+  assertion: tests/conformance_cases.rs runs every case in the ten conformance/jwk_duo/*.json files through
+    the public API and asserts format_version, an exact per-file case count, unique case ids, and the exact
+    error kind (format, state or argument); it does not compare error message text, and it fails if a file
+    on disk is missing from its FILES table.
+  evidence:
+  - tests/conformance_cases.rs
+  - conformance/jwk_duo/hpke_open.json
+  - conformance/README.md
+- id: rfc9180-single-vector-replay
+  assertion: tests/conformance_external.rs checks the one RFC 9180 vector in conformance/rfc9180/test-vectors.json
+    (mode 0, KEM 0x0010, KDF 0x0001, AEAD 0x0002, 257 encryptions) by opening every encryption through one
+    receiver context and by re-sealing only encryption 0 from its ikmE with a test-only fixed-randomness
+    helper, checking enc and ciphertext byte for byte. It calls the hpke crate directly, so it tests that
+    dependency's HPKE base mode and not this crate's blob framing or info prefix.
+  evidence:
+  - tests/conformance_external.rs
+  - conformance/rfc9180/test-vectors.json
+  - conformance/UPSTREAM.md
+- id: circl-hpke-cases-frozen
+  assertion: The two circl_* cases in conformance/jwk_duo/hpke_open.json (circl_empty, circl_ctx) were produced
+    by conformance/tools/kat-gen/main.go using cloudflare/circl HPKE and a fresh random key pair, so re-running
+    the generator would replace them and drop the other 17 cases. The generator copies this crate's blob
+    framing (0x01 || enc || ct) and info prefix rust_jwk_duo/hpke/v1 from the crate, so its independence
+    covers the HPKE computation only.
+  evidence:
+  - conformance/tools/kat-gen/main.go
+  - conformance/jwk_duo/hpke_open.json
+  - conformance/README.md
+- id: platform-verification-manual-only
+  assertion: The repo has no CI configuration, so its platform claims are manual local runs recorded in
+    README.md. It lists macOS, Linux, iOS and Android, and records a crate-only cargo test in Docker (rust:1.92,
+    2026-10-12, exit 0) plus a Dart binding run on Linux/amd64 in Docker.
+  evidence:
+  - README.md
