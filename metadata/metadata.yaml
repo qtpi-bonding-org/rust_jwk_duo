@@ -16,7 +16,7 @@ public:
 private:
   started: 2026-10
   visibility: private
-  license: MIT
+  license: none
   ownership: designed and directed; code written with AI assistance
   build: agentic
 facts:
