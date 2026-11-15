@@ -13,12 +13,6 @@ public:
   links:
   - type: repo
     url: https://github.com/qtpi-bonding-org/rust_jwk_duo
-private:
-  started: 2026-10
-  visibility: private
-  license: none
-  ownership: designed and directed; code written with AI assistance
-  build: agentic
 facts:
 - id: signing-ecdsa-p256-p1363
   assertion: SigningKeyPair signs bytes with ECDSA over P-256 through the p256 crate and returns a 64-byte
