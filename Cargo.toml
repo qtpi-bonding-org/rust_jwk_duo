@@ -17,6 +17,10 @@ getrandom = "0.4"
 zeroize = "1"
 thiserror = "2"
 
+# Browser builds: take randomness from the Web Crypto API (crypto.getRandomValues). No fallback.
+[target.'cfg(all(target_family = "wasm", target_os = "unknown"))'.dependencies]
+getrandom = { version = "0.4", features = ["wasm_js"] }
+
 [features]
 # Test-only hooks (`__*` functions) for the external-vector runner. Never enable in production.
 test-hooks = []
